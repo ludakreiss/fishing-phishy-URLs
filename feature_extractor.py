@@ -135,7 +135,7 @@ def isTinyUrl(url):
         int: Returns 1 if the domain is part of a URL shortening service,
              otherwise returns 0.
     """
-    with open("shortening_services.txt", 'r') as f:
+    with open("Processed Data/shortening_services.txt", 'r') as f:
         shortening_services = set(line.strip().lower() for line in f if line.strip())
 
     domain = urlparse(url).netloc
@@ -199,15 +199,15 @@ def extract_features(url):
     """
     
     return pd.DataFrame({
-        'IP_Address': int(isIPInDomain(url)),
-        'Prefix/Suffix_in_Domain': int(isPrefixSuffixInDomain(url)),
-        'Tiny_URL': int(isTinyUrl(url)),
-        '@_Symbol': int(containsAtSymbol(url)),
-        'URL_Length': getUrlLength(url),
-        'Http/https_in_Domain': int(isProtocolInDomain(url)),
-        'Depth_Of_URL': depthOfUrl(url),
-        'Redirection': int(redirection(url)),
-        'Num_of_Dots': url.count('.'),
-        'Num_of_Hyphens': url.count('-'),
-        'Num_of_Underscore': url.count('_')
+        'IP_Address': [int(isIPInDomain(url))],
+        'Prefix/Suffix_in_Domain': [int(isPrefixSuffixInDomain(url))],
+        'Tiny_URL': [int(isTinyUrl(url))],
+        '@_Symbol': [int(containsAtSymbol(url))],
+        'URL_Length': [getUrlLength(url)],
+        'Http/https_in_Domain': [int(isProtocolInDomain(url))],
+        'Depth_Of_URL': [depthOfUrl(url)],
+        'Redirection': [int(redirection(url))],
+        'Num_of_Dots': [url.count('.')],
+        'Num_of_Hyphens': [url.count('-')],
+        'Num_of_Underscore':[ url.count('_')]
     })
