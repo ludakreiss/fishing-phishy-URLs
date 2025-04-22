@@ -33,18 +33,18 @@ model = st.selectbox("Pick the model",
 
 url = st.text_input(label = "Enter the URL")
 
-scaler = StandardScaler()
+joblib.load("Models/Datatset #2/ TCN/scaler.joblib")
 
 url_df = feature_extractor.extract_features(url)
-url_scaled = scaler.transform(url_df) 
+# url_scaled = scaler.transform(url_df) 
 
 if model == "Linear SVC":
     svc = joblib.load("Models/Dataset #2/Linear SVC/LinearSVC #2.joblib")
-    prediction = svc.predict(url_scaled)
+    prediction = svc.predict(url_df)
 
 elif model == "Multi-layer Perceptron":
     mlp = joblib.load("Models/Dataset #2/MLP/MLP #2.joblib")
-    prediction = mlp.predict(url_scaled)
+    prediction = mlp.predict(url_df)
 
 elif model == "Random Forest":
     rf = joblib.load("Models/Dataset #2/Random Forest/rand_forest #2.joblib")
@@ -52,7 +52,7 @@ elif model == "Random Forest":
 
 elif model == "Temporal Convolutional Network":
     tcn = models.load_model("Models/Dataset #2/TCN/TCN #2.h5")
-    url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) 
+    url_tcn = np.array(url_df).reshape(url_df.shape[0], url_df.shape[1], 1) 
     prediction = tcn.predict(url_tcn)
 
 elif model == "XGBoost":
