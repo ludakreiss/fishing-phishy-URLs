@@ -2,6 +2,11 @@ from urllib.parse import urlparse
 import ipaddress
 import re
 import pandas as pd
+import whois
+import dns
+import streamlit as st
+import date 
+import requests
 def getDomainName(url):
     """
     This fucntion gets the domain name of the URL.
@@ -184,6 +189,132 @@ def depthOfUrl(url):
             depth = depth+1
     return depth
 
+def registrationLength(url):
+    """
+    This function checks how long the domain has to expire for.
+
+    Parameters:
+    -----------
+        URL (str): The URL to check.
+
+    Returns:
+    --------
+        int: Returns 1 if domain expires in a year or less,
+         otherwise returns 0.
+    """
+    domain = urlparse(url).netloc
+
+    try:
+        domain = whois.whois(domain)
+    except:
+        return 1
+
+    expiration_date = domain.expiration_date
+    current_date = date.today()
+
+    if expiration_date is None:
+        return 1
+
+
+    if isinstance(expiration_date, list):
+        for expire in expiration_date:
+            if expire is not None:
+                expiration_date = expire
+                break
+        else:
+            return 1
+
+    if hasattr(expiration_date, "date"):
+        expiration_date = expiration_date.date()
+
+    days_left = (expiration_date - current_date).days
+
+    return 1 if days_left < 365 else 0
+
+
+def getDNSRecord(url):
+    """
+    This function checks if there is a record for the domain in the DNS.
+
+    Parameters:
+    -----------
+        URL (str): The URL to check.
+
+    Returns:
+    --------
+        int: Returns 1 if no record in DNS,
+         otherwise returns 0.
+    """
+    
+    domain = urlparse(url).netloc
+
+    if re.match(r'^www\.', domain):
+        domain = domain.removeprefix("www.")
+
+
+    answers = []
+
+    for query_type in dns.rdatatype.RdataType:
+        try:
+            answers.extend(list(dns.resolver.resolve(domain, query_type)))
+        except dns.exception.DNSException:
+            continue
+    
+    return 0 if answers else 1
+
+
+
+def getWHOISDomain(url):
+    """
+    This function attempts to perform a WHOIS lookup on the given URL's domain.
+
+    Parameters:
+    -----------
+        URL (str): The URL to check.
+
+    Returns:
+    --------
+        int: Returns 0 if WHOIS information was successfully retrieved,
+         otherwise returns 1.
+    """
+    domain = urlparse(url).netloc
+
+    try:
+        domain = whois.whois(domain)
+        return 0
+    except:
+        return 1
+
+
+def isGoogleIndex(url):
+    """
+    This function checks if URL is indexed by Google using SerpAPI.
+
+    Parameters:
+    -----------
+        URL (str): The URL to check.
+
+    Returns:
+    --------
+        int: Returns 0 if the domain is found in Google's search results,
+        otherwise returns 1.
+    """
+    domain = urlparse(url).netloc
+    api_key = st.secrets["SERPAPI_API_KEY"]
+
+    request_serp = f"https://api/serphourse.com/serp.live?q=site:{domain}&api_token={api_key}"
+
+    response = requests.get(request_serp)
+    data = response.json()
+
+    if "organic" in data:
+        if data["organic"]:
+            return 0
+        else:
+            return 1
+    else:
+        return 1
+
 
 def extract_features(url):
     """
@@ -207,6 +338,10 @@ def extract_features(url):
         'Http/https_in_Domain': [int(isProtocolInDomain(url))],
         'Depth_Of_URL': [depthOfUrl(url)],
         'Redirection': [int(redirection(url))],
+        'Google_Index': [int(isGoogleIndex(url))],
+        'WHOIS_Domain': [int(getWHOISDomain(url))],
+        'DNS_Record': [int(getDNSRecord(url))],
+        'Registration_Length': [int(registrationLength(url))],
         'Num_of_Dots': [url.count('.')],
         'Num_of_Hyphens': [url.count('-')],
         'Num_of_Underscore':[ url.count('_')]
