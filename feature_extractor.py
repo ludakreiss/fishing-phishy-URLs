@@ -3,9 +3,9 @@ import ipaddress
 import re
 import pandas as pd
 import whois
-import dns
+import dns.resolver
 import streamlit as st
-import date 
+from datetime import date 
 import requests
 def getDomainName(url):
     """
