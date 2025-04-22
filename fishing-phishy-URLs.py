@@ -3,7 +3,8 @@ import pandas as pd
 import joblib
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models  import load_model
+from tensorflow import keras
+from keras import models
 import feature_extractor
 from sklearn.preprocessing import StandardScaler
 
@@ -50,7 +51,7 @@ elif model == "Random Forest":
     prediction = rf.predict(url_df)
 
 elif model == "Temporal Convolutional Network":
-    tcn = load_model("../Models/Dataset #2/TCN/TCN #2.h5")
+    tcn = models.load_model("../Models/Dataset #2/TCN/TCN #2.h5")
     url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) 
     prediction = tcn.predict(url_tcn)
 
