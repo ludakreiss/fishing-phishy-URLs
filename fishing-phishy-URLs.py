@@ -9,6 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from keras import backend as K
 import xgboost as xgb
 from tcn import TCN 
+from tensorflow.keras.optimizers import Adam
 
 st.set_page_config(
     page_title = "Phsihing Detection System",
@@ -57,12 +58,30 @@ url = st.text_input(label = "Enter the URL")
 # st.write("Prediction shape:", prediction.shape)
 # st.write("Prediction output:", prediction)
 
-custom_objects = {'TCN': TCN}
+def f1(y_true, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    p = true_positives / (predicted_positives + K.epsilon())
+    r = true_positives / (possible_positives + K.epsilon())
+    return 2 * ((p * r) / (p + r + K.epsilon()))
 
-with tf.keras.utils.custom_object_scope(custom_objects):
-    tcn = tf.keras.models.load_model("Models/Dataset #2/TCN/TCN #2.h5")
+custom_objects = {
+    "TCN": TCN,               # Your custom TCN layer class
+    "f1": f1      # Your custom metric function
+}
 
 
+# Load architecture from JSON
+with open("tcn_architecture.json", "r") as f:
+    tcn = models.model_from_json(f.read(), custom_objects=custom_objects)
+tcn.load_weights("TCN #2.weights.h5")  # Load weights (must match architecture)
+
+tcn.compile(
+    optimizer=Adam(learning_rate = 0.001),
+    loss='binary_crossentropy',
+    metrics=['accuracy', f1]
+)
 
 
 if url:
