@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 import numpy as np
 import tensorflow as tf
-from tensorflow.python.keras import models 
+from tensorflow.python.keras import models
 import feature_extractor
 from sklearn.preprocessing import StandardScaler
 from keras import backend as K
@@ -41,22 +41,10 @@ url = st.text_input(label = "Enter the URL")
 # from tensorflow.python.keras.utils import get_custom_objects
 # from tcn import TCN  # Ensure this is the correct import path
 
-def f1(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    p = true_positives / (predicted_positives + K.epsilon())
-    r = true_positives / (possible_positives + K.epsilon())
-    return 2 * ((p * r) / (p + r + K.epsilon()))
 
-# custom_objects = {
-#     'TCN': TCN,
-#     'f1': f1
-# }
 
-# # Now load the model
-# tcn = load_model("Models/Dataset #2/TCN/TCN #2.h5", custom_objects=custom_objects)
 
+# Now load the model
 # # import numpy as np
 # from tensorflow.python.keras.models import load_model
 # # custom_objects = {"TCN": TCN}
@@ -69,9 +57,12 @@ def f1(y_true, y_pred):
 # st.write("Prediction shape:", prediction.shape)
 # st.write("Prediction output:", prediction)
 
+custom_objects = {'TCN': TCN}
 
-import sys
-st.write(sys.executable)
+with tf.keras.utils.custom_object_scope(custom_objects):
+    tcn = tf.keras.models.load_model("Models/Dataset #2/TCN/TCN #2.h5")
+
+
 
 
 if url:
@@ -115,7 +106,12 @@ if url:
         st.text(f"Your URL {'smells phishy' if label == 1 else 'does not smell phishy'}")
 
     elif model == "Temporal Convolutional Network":
-        tcn = models.load_model("Models/Dataset #2/TCN/TCN #2.h5", custom_objects={"TCN": TCN}, compile=False)
+        custom_objects = {'TCN': TCN}
+
+        with tf.keras.utils.custom_object_scope(custom_objects):
+            tcn = tf.keras.models.load_model("Models/Dataset #2/TCN/TCN #2.h5")
+        tcn.load_weights("path/to/weights.h5")
+
         scaler = joblib.load("Models/Dataset #2/TCN/scaler.joblib")
         url_scaled = scaler.transform(url_df) 
         url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) 
