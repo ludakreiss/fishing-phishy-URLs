@@ -7,6 +7,7 @@ import dns.resolver
 import streamlit as st
 from datetime import date 
 import requests
+from serpapi import GoogleSearch
 def getDomainName(url):
     """
     This fucntion gets the domain name of the URL.
@@ -299,21 +300,25 @@ def isGoogleIndex(url):
         int: Returns 0 if the domain is found in Google's search results,
         otherwise returns 1.
     """
-    domain = urlparse(url).netloc
     api_key = st.secrets["SERPAPI_API_KEY"]
+    domain = urlparse(url).netloc
 
-    request_serp = f"https://api/serphourse.com/serp.live?q=site:{domain}&api_token={api_key}"
+    params = {
+        "engine": "google",
+        "q": f"site:{domain}",
+        "api_key": api_key
+    }
 
-    response = requests.get(request_serp)
-    data = response.json()
+    search = GoogleSearch(params)
+    results = search.get_dict()
 
-    if "organic" in data:
-        if data["organic"]:
+    organic_results = results.get("organic_results", [])
+
+    for result in organic_results:
+        if url in result.get("link", ""):
             return 0
-        else:
-            return 1
-    else:
-        return 1
+
+    return 1
 
 
 def extract_features(url):
