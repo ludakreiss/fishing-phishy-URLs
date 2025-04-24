@@ -4,6 +4,8 @@ import re
 import pandas as pd
 import whois
 import dns.resolver
+import dns.rdatatype
+import dns.exception
 import streamlit as st
 from datetime import date 
 import requests
