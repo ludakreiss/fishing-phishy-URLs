@@ -3,13 +3,10 @@ import pandas as pd
 import joblib
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
-from keras import models
+from tensorflow.python.keras import models 
 import feature_extractor
 from sklearn.preprocessing import StandardScaler
 import xgboost as xgb
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
 from tcn import TCN 
 
 st.set_page_config(
@@ -37,9 +34,8 @@ model = st.selectbox("Pick the model",
 
 url = st.text_input(label = "Enter the URL")
 
-scaler = joblib.load("Models/Dataset #2/TCN/scaler.joblib")
 
-get_custom_objects().update({'TCN': TCN})
+tf.python.keras.utils.get_custom_objects().update({'TCN': TCN})
 
 if url:
     url_df = feature_extractor.extract_features(url)
@@ -86,12 +82,12 @@ if url:
         st.text(f"Your url is {prediction}% phishy")
 
     elif model == "Temporal Convolutional Network":
-        tcn = models.load_model("Models/Dataset #2/TCN/TCN #2.h5")
+        tcn = models.load_model("Models/Dataset #2/TCN/TCN #2.h5", compile=False)
         scaler = joblib.load("Models/Dataset #2/TCN/scaler.joblib")
         url_scaled = scaler.transform(url_df) 
         url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) 
         prediction = tcn.predict(url_tcn)
-        st.text(f"Your url is {prediction}% phishy")
+        st.text(f"Your URL is {'phishy' if prediction[0] > 0.5 else 'safe'}")
 
     elif model == "XGBoost":
         xgb = joblib.load("Models/Dataset #2/XGBoost/XGBoost #2.joblib")
