@@ -6,6 +6,7 @@ import tensorflow as tf
 from tensorflow.python.keras import models 
 import feature_extractor
 from sklearn.preprocessing import StandardScaler
+from keras import backend as K
 import xgboost as xgb
 from tcn import TCN 
 
@@ -32,10 +33,46 @@ model = st.selectbox("Pick the model",
                      ["Linear SVC", "Multi-layer Perceptron", "Random Forest", "Temporal Convolutional Network", "XGBoost"], 
                      help ="Beware, each model that is picked may produce different results! ")
 
+
+
+
 url = st.text_input(label = "Enter the URL")
 
+# from tensorflow.python.keras.utils import get_custom_objects
+# from tcn import TCN  # Ensure this is the correct import path
 
-tf.python.keras.utils.get_custom_objects().update({'TCN': TCN})
+def f1(y_true, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    p = true_positives / (predicted_positives + K.epsilon())
+    r = true_positives / (possible_positives + K.epsilon())
+    return 2 * ((p * r) / (p + r + K.epsilon()))
+
+# custom_objects = {
+#     'TCN': TCN,
+#     'f1': f1
+# }
+
+# # Now load the model
+# tcn = load_model("Models/Dataset #2/TCN/TCN #2.h5", custom_objects=custom_objects)
+
+# # import numpy as np
+# from tensorflow.python.keras.models import load_model
+# # custom_objects = {"TCN": TCN}
+
+# # Run a basic check with dummy data
+# dummy_data = np.random.rand(10, 20, 1)  # Example input shape
+# prediction = tcn.predict(dummy_data)
+
+# # Check the shape of the prediction and print it to verify everything works
+# st.write("Prediction shape:", prediction.shape)
+# st.write("Prediction output:", prediction)
+
+
+import sys
+st.write(sys.executable)
+
 
 if url:
     url_df = feature_extractor.extract_features(url)
@@ -71,18 +108,14 @@ if url:
 
     elif model == "Random Forest":
         rf = joblib.load("Models/Dataset #2/Random Forest/rand_forest #2.joblib")
-
         prediction = rf.predict(url_df)
-
-        st.write("Extracted Features:", url_df)
-        st.write("Prediction:", prediction)
 
         label = prediction[0]
 
-        st.text(f"Your url is {prediction}% phishy")
+        st.text(f"Your URL {'smells phishy' if label == 1 else 'does not smell phishy'}")
 
     elif model == "Temporal Convolutional Network":
-        tcn = models.load_model("Models/Dataset #2/TCN/TCN #2.h5", compile=False)
+        tcn = models.load_model("Models/Dataset #2/TCN/TCN #2.h5", custom_objects={"TCN": TCN}, compile=False)
         scaler = joblib.load("Models/Dataset #2/TCN/scaler.joblib")
         url_scaled = scaler.transform(url_df) 
         url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) 
