@@ -9,7 +9,7 @@ import dns.exception
 import streamlit as st
 from datetime import date 
 import requests
-import serpapi
+from serpapi import GoogleSearch
 def getDomainName(url):
     """
     This fucntion gets the domain name of the URL.
@@ -311,7 +311,7 @@ def isGoogleIndex(url):
         "api_key": api_key
     }
 
-    search = serpapi.GoogleSearch(params)
+    search = GoogleSearch(params)
     results = search.get_dict()
 
     organic_results = results.get("organic_results", [])
