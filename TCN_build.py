@@ -1,6 +1,7 @@
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, GlobalMaxPooling1D, GlobalAveragePooling1D, Concatenate, Dense, Dropout
 from tcn import TCN 
+from tensorflow.keras import backend as K
 
 def create_model():
     inputs = Input(shape=(15, 1))
@@ -23,3 +24,11 @@ def create_model():
 
     model = Model(inputs=inputs, outputs=outputs)
     return model
+
+def f1(y_true, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    p = true_positives / (predicted_positives + K.epsilon())
+    r = true_positives / (possible_positives + K.epsilon())
+    return 2 * ((p * r) / (p + r + K.epsilon()))
