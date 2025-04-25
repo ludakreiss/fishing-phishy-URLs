@@ -6,3 +6,6 @@ numpy
 tensorflow
 feature_extractor
 joblib
+serpapi
+google-search-results
+TCN_build
