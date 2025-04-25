@@ -9,7 +9,7 @@ import dns.exception
 import streamlit as st
 from datetime import date 
 import requests
-from serpapi import GoogleSearch
+from serpapi.google_search import GoogleSearch
 def getDomainName(url):
     """
     This fucntion gets the domain name of the URL.
