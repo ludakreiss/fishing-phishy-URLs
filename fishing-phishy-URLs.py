@@ -11,13 +11,14 @@ import xgboost as xgb
 from tensorflow.keras.optimizers import Adam
 from TCN_build import create_model, f1
 
+# Setting up the page components
 st.set_page_config(
     page_title = "Phsihing Detection System",
     page_icon=":fish:",
     layout="centered",
 )
 
-st.markdown("""
+st.markdown(r"""
     <h1 style='text-align: center;'>How Phishy Is This Website?</h1>
             
     <style>
@@ -36,11 +37,12 @@ st.markdown("""
     
     unsafe_allow_html=True)
 
+# Selecting whuich model would the user liek to pick
 model = st.selectbox("", 
                      ["Linear SVC", "Multi-layer Perceptron", "Random Forest", "Temporal Convolutional Network", "XGBoost"], 
                      help="Beware, each model that is picked may produce different results!")
 
-st.markdown("""
+st.markdown(r"""
     <style>
         .vertical-space { margin-top: 70px; }
     </style>
@@ -54,7 +56,7 @@ st.markdown("""
 
 url = st.text_input(label="")
 
-
+# If the user enters a URL, then the URL is extracted and is fed to the chosen model 
 if url:
     url_df = feature_extractor.extract_features(url)
     
