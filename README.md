@@ -20,6 +20,138 @@ The idea to this project started with observing how much of phishing continues t
 
 In this project, 3 datasets have been expeirmented on using 5 different models. In addition, the project showcases how factors such as imbalanced vs balanced datastes and the types of fetaures extracted may affect the effeciency of a model.  
 
+<a id="item-two"></a>
+## Working Tree of the Repository
+```
+.devcontainer
+   |-- devcontainer.json
+.gitignore
+.streamlit
+   |-- config.toml
+LICENSE
+Models
+   |-- Dataset #1
+   |   |-- Linear SVC
+   |   |   |-- Linear SVC.ipynb
+   |   |   |-- LinearSVC #1.joblib
+   |   |-- MLP
+   |   |   |-- MLP #1.joblib
+   |   |   |-- MLP.ipynb
+   |   |-- Metrics of Dataset #1.csv
+   |   |-- Random Forest
+   |   |   |-- Random Forest.ipynb
+   |   |   |-- rand_forest #1.joblib
+   |   |-- TCN
+   |   |   |-- TCN #1.h5
+   |   |   |-- TCN.ipynb
+   |   |-- XGBoost
+   |   |   |-- XGBoost #1.joblib
+   |   |   |-- XGBoost.ipynb
+   |-- Dataset #2
+   |   |-- Linear SVC
+   |   |   |-- Linear SVC.ipynb
+   |   |   |-- LinearSVC #2.joblib
+   |   |   |-- scaler.joblib
+   |   |-- MLP
+   |   |   |-- MLP #2.joblib
+   |   |   |-- MLP.ipynb
+   |   |   |-- scaler.joblib
+   |   |-- Metrics of Dataset #2.csv
+   |   |-- Random Forest
+   |   |   |-- Random Forest.ipynb
+   |   |   |-- rand_forest #2.joblib
+   |   |-- TCN
+   |   |   |-- TCN #2.h5
+   |   |   |-- TCN #2.weights.h5
+   |   |   |-- TCN.ipynb
+   |   |   |-- scaler.joblib
+   |   |   |-- tcn_model_architecture.json
+   |   |-- XGBoost
+   |   |   |-- XGBoost #2.joblib
+   |   |   |-- XGBoost.ipynb
+   |-- Dataset #3 (Oversampling)
+   |   |-- Linear SVC
+   |   |   |-- Linear SVC.ipynb
+   |   |   |-- LinearSVC #3.joblib
+   |   |-- MLP
+   |   |   |-- MLP #3.joblib
+   |   |   |-- MLP.ipynb
+   |   |-- Metrics of Dataset #3 (Oversampling).csv
+   |   |-- Random Forest
+   |   |   |-- Random Forest.ipynb
+   |   |   |-- rand_forest #3.joblib
+   |   |-- TCN
+   |   |   |-- TCN #3.h5
+   |   |   |-- TCN.ipynb
+   |   |-- XGBoost
+   |   |   |-- XGBoost #3.joblib
+   |   |   |-- XGBoost.ipynb
+   |-- Dataset #3 (Undersampling)
+   |   |-- Linear SVC
+   |   |   |-- Linear SVC.ipynb
+   |   |   |-- LinearSVC (Undersampling) #3.joblib
+   |   |-- MLP
+   |   |   |-- MLP (Undersampling)#3.joblib
+   |   |   |-- MLP.ipynb
+   |   |-- Metrics of Dataset (Undersampling)#3.csv
+   |   |-- Random Forest
+   |   |   |-- Random Forest.ipynb
+   |   |   |-- rand_forest (Undersampling) #3.joblib
+   |   |-- TCN
+   |   |   |-- TCN (Undersampling)#3.h5
+   |   |   |-- TCN.ipynb
+   |   |-- XGBoost
+   |   |   |-- XGBoost(Undersampling) #3.joblib
+   |   |   |-- XGBoost.ipynb
+Processed Data
+   |-- Dataset #1 After Feature Extraction.csv
+   |-- Dataset#2 After Feature Extraction.csv
+   |-- Dataset#3 After Feature Extraction.csv
+   |-- Datasets.ipynb
+   |-- shortening_services.txt
+README.md
+Raw Data
+   |-- Dataset #1.csv
+   |-- Dataset #2.csv
+   |-- Dataset #3.csv
+Split Data
+   |-- Split Dataset #1.ipynb
+   |-- Split Dataset #2.ipynb
+   |-- Split Dataset #3 (Oversample).ipynb
+   |-- Split Dataset #3 (Undersample).ipynb
+   |-- Testing Dataset
+   |   |-- X_test #1.csv
+   |   |-- X_test #2.csv
+   |   |-- X_test #3.csv
+   |   |-- X_test (Undersample)#3.csv
+   |   |-- y_test #1.csv
+   |   |-- y_test #2.csv
+   |   |-- y_test #3.csv
+   |   |-- y_test (Undersample)#3.csv
+   |-- Training Dataset
+   |   |-- X_train #1.csv
+   |   |-- X_train #2.csv
+   |   |-- X_train #3.csv
+   |   |-- X_train (Undersample)#3.csv
+   |   |-- y_train #1.csv
+   |   |-- y_train #2.csv
+   |   |-- y_train #3.csv
+   |   |-- y_train (Undersample)#3.csv
+   |-- Validation Dataset
+   |   |-- X_val #1.csv
+   |   |-- X_val #2.csv
+   |   |-- X_val #3.csv
+   |   |-- X_val (Undersample)#3.csv
+   |   |-- y_val #1.csv
+   |   |-- y_val #2.csv
+   |   |-- y_val #3.csv
+   |   |-- y_val (Undersample)#3.csv
+TCN_build.py
+feature_extractor.py
+fishing-phishy-URLs.py
+requirements.txt
+runtime.txt
+```
 
 <a id="item-three"></a>
 ## Links to the Datasets Used
@@ -37,6 +169,14 @@ In this project, 3 datasets have been expeirmented on using 5 different models. 
 <a id="item-seven"></a>
 ## Results of Each Dataset After Testing
 ### Dataset #1
+| Model           | Accuracy | Precision | Recall | F1_score |
+|-----------------|----------|-----------|--------|----------|
+| LinearSVC       | 0.7967   | 0.8402    | 0.1530 | 0.2589   |
+| Random Forest   | 0.8703   | 0.8723    | 0.5165 | 0.6488   |
+| XGBoost         | 0.8663   | 0.8763    | 0.4934 | 0.6314   |
+| MLP             | 0.8690   | 0.8758    | 0.5073 | 0.6424   |
+| TCN             | 0.8691   | 0.8509    | 0.5282 | 0.6518   |
+
 ### Dataset #2
 
 | Model           | Accuracy | Precision | Recall | F1_score |
