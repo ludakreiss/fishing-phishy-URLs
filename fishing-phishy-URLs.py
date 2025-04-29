@@ -11,143 +11,113 @@ import xgboost as xgb
 from tensorflow.keras.optimizers import Adam
 from TCN_build import create_model, f1
 
-# Setting up the page components
-st.set_page_config(
-    page_title = "Phsihing Detection System",
-    page_icon=":fish:",
-    layout="centered",
-)
 
-st.markdown(r"""
-    <h1 style='text-align: center;'>How Phishy Is This Website?</h1>
-            
-    <style>
-        .vertical-space { margin-top: 50px; }
-    </style>
-    <div class="vertical-space"></div>
-            
-    <h3 style='text-align: center;'> Paste a URL and see how likely is it to be a Phish &#x1F41F;! </h3>
-            
-    <style>
-        .vertical-space { margin-top: 70px; }
-    </style>
-    <div class="vertical-space"></div>
-            
-    <div style='text-align: center; font-size: 30px;'>Pick your model</div>""", 
-    
-    unsafe_allow_html=True)
+def main():
 
-# Selecting whuich model would the user liek to pick
-model = st.selectbox("", 
-                     ["Linear SVC", "Multi-layer Perceptron", "Random Forest", "Temporal Convolutional Network", "XGBoost"], 
-                     help="Beware, each model that is picked may produce different results!")
+    # Setting up the page components
+    st.set_page_config(
+        page_title = "Phsihing Detection System",
+        page_icon=":fish:",
+        layout="centered",
+    )
 
-st.markdown(r"""
-    <style>
-        .vertical-space { margin-top: 70px; }
-    </style>
-    <div class="vertical-space"></div>
-            
-    <div style='text-align: center; font-size: 30px;'>Enter your URL</div>
-            
-    """,
-    
-    unsafe_allow_html=True)
+    st.markdown(r"""
+        <h1 style='text-align: center;'>How Phishy Is This Website?</h1>
+                
+        <style>
+            .vertical-space { margin-top: 50px; }
+        </style>
+        <div class="vertical-space"></div>
+                
+        <h3 style='text-align: center;'> Paste a URL and see how likely is it to be a Phish &#x1F41F;! </h3>
+                
+        <style>
+            .vertical-space { margin-top: 70px; }
+        </style>
+        <div class="vertical-space"></div>
+                
+        <div style='text-align: center; font-size: 30px;'>Pick your model</div>
+                
+        <div style='text-align: center; font-size: 20px;'>Beware that each model may output a different result to the same URL.</div>""", 
+        
+        unsafe_allow_html=True)
 
-url = st.text_input(label="")
+    # Selecting whuich model would the user liek to pick
+    model = st.selectbox("", 
+                        ["Linear SVC", "Multi-layer Perceptron", "Random Forest", "Temporal Convolutional Network", "XGBoost"])
 
-# If the user enters a URL, then the URL is extracted and is fed to the chosen model 
-if url:
-    url_df = feature_extractor.extract_features(url)
-    
+    st.markdown(r"""
+        <style>
+            .vertical-space { margin-top: 70px; }
+        </style>
+        <div class="vertical-space"></div>
+                
+        <div style='text-align: center; font-size: 30px;'>Enter your URL</div>
+                
+        """,
+        
+        unsafe_allow_html=True)
 
-    if model == "Linear SVC":
-        svc = joblib.load("Models/Dataset #2/Linear SVC/LinearSVC #2.joblib")
-        scaler = joblib.load("Models/Dataset #2/Linear SVC/scaler.joblib")
+    url = st.text_input(label="")
 
-        url_scaled = scaler.transform(url_df) 
+    # If the user enters a URL, then the URL is extracted and is fed to the chosen model 
+    if url:
+        url_df = feature_extractor.extract_features(url)
+        
 
-        # prediction = svc.predict_proba(url_scaled)
+        if model == "Linear SVC":
+            svc = joblib.load("Models/Dataset #2/Linear SVC/LinearSVC #2.joblib") #Load in the model
+            scaler = joblib.load("Models/Dataset #2/Linear SVC/scaler.joblib") #Load in its respective scaler
 
-        # probability = prediction[0][1]
-        # st.text(f"Class order: {svc.classes_}")
-        # st.text(f"Probabilities: {prediction}")
-        # probability = prediction[0][1]
+            url_scaled = scaler.transform(url_df) #scale the URL
 
-        # if probability > 0.5:
-        #     st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        #     st.text(probability)
-        # elif probability <= 0.5:
-        #      st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
-        #      st.text(probability)
+            prediction = svc.predict_proba(url_scaled) #Predict the label of the URL
+            probability = prediction[0][1] #Extract the probability of class 1 (phishing)
+            st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
 
-    elif model == "Multi-layer Perceptron":
-        mlp = joblib.load("Models/Dataset #2/MLP/MLP #2.joblib")
-        scaler = joblib.load("Models/Dataset #2/MLP/scaler.joblib")
+        elif model == "Multi-layer Perceptron":
+            mlp = joblib.load("Models/Dataset #2/MLP/MLP #2.joblib") #Load in the model
+            scaler = joblib.load("Models/Dataset #2/MLP/scaler.joblib") #Load in its respective scaler
 
-        url_scaled = scaler.transform(url_df) 
-        prediction = mlp.predict_proba(url_df)
-        probability = prediction[0][1]
+            url_scaled = scaler.transform(url_df)  #scale the URL
 
-        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
+            prediction = mlp.predict_proba(url_df) #Predict the label of the URL
+            probability = prediction[0][1] #Extract the probability of class 1 (phishing)
+            st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
 
-        # if probability > 0.5:
-        #     st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        #     st.text(probability)
-        # elif probability <= 0.5:
-        #      st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
-        #      st.text(probability)
+        elif model == "Random Forest":
+            rf = joblib.load("Models/Dataset #2/Random Forest/rand_forest #2.joblib") #Load in the model
 
-    elif model == "Random Forest":
-        rf = joblib.load("Models/Dataset #2/Random Forest/rand_forest #2.joblib")
-        prediction = rf.predict_proba(url_df)
+            prediction = rf.predict_proba(url_df) #Predict the label of the URL
+            probability = prediction[0][1] #Extract the probability of class 1 (phishing)
+            st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
 
-        probability = prediction[0][1]
+        elif model == "Temporal Convolutional Network":
 
-        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
+            model = create_model() #Build the archtecture of the TCN model
+            model.compile(
+                optimizer=Adam(learning_rate = 0.001),
+                loss='binary_crossentropy',
+                metrics=['accuracy', f1]
+            ) #Compile the model 
 
-        # if probability > 0.5:
-        #     st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        #     st.text(probability)
-        # elif probability <= 0.5:
-        #      st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
-        #      st.text(probability)
+            model.load_weights("Models/Dataset #2/TCN/TCN #2.weights.h5") #Load in the weights of a trained TCN model
 
-    elif model == "Temporal Convolutional Network":
+            scaler = joblib.load("Models/Dataset #2/TCN/scaler.joblib") #Load in its respective scaler
+            url_scaled = scaler.transform(url_df)  #scale the URL
+            url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) #Reshape the url_scaled as the model expects shape (15, 1, 1)
 
-        model = create_model()
-        model.compile(
-            optimizer=Adam(learning_rate = 0.001),
-            loss='binary_crossentropy',
-            metrics=['accuracy', f1]
-        )
-        model.load_weights("Models/Dataset #2/TCN/TCN #2.weights.h5")
-
-        scaler = joblib.load("Models/Dataset #2/TCN/scaler.joblib")
-        url_scaled = scaler.transform(url_df) 
-        url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) 
-        prediction = model.predict(url_tcn)
-
-        probability = prediction[0][1]
-        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
+            prediction = model.predict(url_tcn) #Predict the label of the URL
+            probability = prediction[0][1]#Extract the probability of class 1 (phishing)
+            st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
 
 
-    elif model == "XGBoost":
-        xgb = joblib.load("Models/Dataset #2/XGBoost/XGBoost #2.joblib")
+        elif model == "XGBoost":
+            xgb = joblib.load("Models/Dataset #2/XGBoost/XGBoost #2.joblib") #Load in the model
 
+            prediction = xgb.predict_proba(url_df)  #Predict the label of the URL
+            probability = prediction[0][1]  #Extract the probability of class 1 (phishing)
+            st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
 
-        prediction = xgb.predict_proba(url_df)
-
-        probability = prediction[0][1]
-
-        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
-
-
-        # if probability > 0.5:
-        #     st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        #     st.text(probability)
-        # elif probability <= 0.5:
-        #      st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
-        #      st.text(probability)
-
-
+if __name__ == "__main__":
+    main()
