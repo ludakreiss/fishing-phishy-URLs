@@ -125,12 +125,12 @@ if url:
     elif model == "XGBoost":
         xgb = joblib.load("Models/Dataset #2/XGBoost/XGBoost #2.joblib")
 
-        prediction = xgb.predict(url_df)
-        label = prediction[0]
+        prediction = xgb.predict_proba(url_df)
+        probability = prediction[0][1]
 
-        if label ==1:
+        if probability > 0.5:
             st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        elif label == 0:
+        elif probability <= 0.5:
              st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
 
 
