@@ -67,38 +67,51 @@ if url:
 
         url_scaled = scaler.transform(url_df) 
 
-        prediction = svc.predict(url_scaled)
+        # prediction = svc.predict_proba(url_scaled)
 
-        label = prediction[0]
-        if label ==1:
-            st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        elif label == 0:
-             st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        # probability = prediction[0][1]
+        # st.text(f"Class order: {svc.classes_}")
+        # st.text(f"Probabilities: {prediction}")
+        # probability = prediction[0][1]
+
+        # if probability > 0.5:
+        #     st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
+        #     st.text(probability)
+        # elif probability <= 0.5:
+        #      st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        #      st.text(probability)
 
     elif model == "Multi-layer Perceptron":
         mlp = joblib.load("Models/Dataset #2/MLP/MLP #2.joblib")
         scaler = joblib.load("Models/Dataset #2/MLP/scaler.joblib")
 
         url_scaled = scaler.transform(url_df) 
+        prediction = mlp.predict_proba(url_df)
+        probability = prediction[0][1]
 
-        prediction = mlp.predict(url_scaled)
+        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
 
-        label = prediction[0]
-        if label ==1:
-            st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        elif label == 0:
-             st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        # if probability > 0.5:
+        #     st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
+        #     st.text(probability)
+        # elif probability <= 0.5:
+        #      st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        #      st.text(probability)
 
     elif model == "Random Forest":
         rf = joblib.load("Models/Dataset #2/Random Forest/rand_forest #2.joblib")
-        prediction = rf.predict(url_df)
+        prediction = rf.predict_proba(url_df)
 
-        label = prediction[0]
+        probability = prediction[0][1]
 
-        if label ==1:
-            st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        elif label == 0:
-             st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
+
+        # if probability > 0.5:
+        #     st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
+        #     st.text(probability)
+        # elif probability <= 0.5:
+        #      st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        #      st.text(probability)
 
     elif model == "Temporal Convolutional Network":
 
@@ -114,23 +127,27 @@ if url:
         url_scaled = scaler.transform(url_df) 
         url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) 
         prediction = model.predict(url_tcn)
-        label = label = np.argmax(prediction[0])
 
-        if label ==1:
-            st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        elif label == 0:
-             st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        probability = prediction[0][1]
+        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
 
 
     elif model == "XGBoost":
         xgb = joblib.load("Models/Dataset #2/XGBoost/XGBoost #2.joblib")
 
+
         prediction = xgb.predict_proba(url_df)
+
         probability = prediction[0][1]
 
-        if probability > 0.5:
-            st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
-        elif probability <= 0.5:
-             st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
+
+
+        # if probability > 0.5:
+        #     st.markdown(r"<div style='text-align: center; font-size: 20px;'>This URL is most likely a phishing rod! &#x1F3A3</div>", unsafe_allow_html=True)
+        #     st.text(probability)
+        # elif probability <= 0.5:
+        #      st.markdown(r"<div style='text-align: center; font-size: 20px;'>This is a safe URL.</div>", unsafe_allow_html=True)
+        #      st.text(probability)
 
 
