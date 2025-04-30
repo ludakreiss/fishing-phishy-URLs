@@ -68,20 +68,20 @@ def main():
 
     rf = joblib.load("Models/Dataset #2/Random Forest/rand_forest #2.joblib") #Random Forest
 
-    model = create_model() #TCN: Build the archtecture of the TCN model
-    model.compile(
+    tcn = create_model() #TCN: Build the archtecture of the TCN model
+    tcn.compile(
         optimizer=Adam(learning_rate = 0.001),
         loss='binary_crossentropy',
         metrics=['accuracy', f1]
     ) #TCN: Compile the model 
-    model.load_weights("Models/Dataset #2/TCN/TCN #2.weights.h5") #TCN: Load in the weights of a trained TCN model
+    tcn.load_weights("Models/Dataset #2/TCN/TCN #2.weights.h5") #TCN: Load in the weights of a trained TCN model
 
     xgb = joblib.load("Models/Dataset #2/XGBoost/XGBoost #2.joblib") #XGBoost
 
 
 
     # If the user enters a URL, then the URL is extracted and is fed to the chosen model 
-    
+
     if url:
         url_df = feature_extractor.extract_features(url)
 
@@ -89,27 +89,48 @@ def main():
             scaler = joblib.load("Models/Dataset #2/Linear SVC/scaler.joblib") #Load in its respective scaler
             url_scaled = scaler.transform(url_df) #scale the URL
             prediction = svc.predict_proba(url_scaled) #Predict the label of the URL
+            probability = prediction[0][1]
+            st.markdown(
+                f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>",
+                unsafe_allow_html=True
+            )
             
         elif model == "Multi-layer Perceptron":
             scaler = joblib.load("Models/Dataset #2/MLP/scaler.joblib") #Load in its respective scaler
             url_scaled = scaler.transform(url_df)  #scale the URL
             prediction = mlp.predict_proba(url_df) #Predict the label of the URL
+            probability = prediction[0][1]
+            st.markdown(
+                f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>",
+                unsafe_allow_html=True
+            )
             
         elif model == "Random Forest":
             prediction = rf.predict_proba(url_df) #Predict the label of the URL
+            probability = prediction[0][1]
+            st.markdown(
+                f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>",
+                unsafe_allow_html=True
+            )
             
         elif model == "Temporal Convolutional Network":
             scaler = joblib.load("Models/Dataset #2/TCN/scaler.joblib") #Load in its respective scaler
             url_scaled = scaler.transform(url_df)  #scale the URL
             url_tcn = np.array(url_scaled).reshape(url_scaled.shape[0], url_scaled.shape[1], 1) #Reshape the url_scaled as the model expects shape (15, 1, 1)
-            prediction = model.predict(url_tcn) #Predict the label of the URL
+            prediction = tcn.predict(url_tcn) #Predict the label of the URL
+            probability = prediction[0][1]
+            st.markdown(
+                f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>",
+                unsafe_allow_html=True
+            )
             
         elif model == "XGBoost":
             prediction = xgb.predict_proba(url_df)  #Predict the label of the URL
-
-
-        probability = prediction[0][1] #Extract the probability of class 1 (phishing)
-        st.markdown(f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>", unsafe_allow_html=True)
+            probability = prediction[0][1]
+            st.markdown(
+                f"<div style='text-align: center; font-size: 20px;'>The chances of this URL being phishy is {probability * 100:.2f}% !</div>",
+                unsafe_allow_html=True
+            )
 
 
 if __name__ == "__main__":
