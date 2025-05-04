@@ -10,7 +10,7 @@ import streamlit as st
 from datetime import date 
 import requests
 from serpapi.google_search import GoogleSearch
-def getDomainName(url):
+def get_domain_name(url):
     """
     This fucntion gets the domain name of the URL.
 
@@ -33,7 +33,7 @@ def getDomainName(url):
 
     return domain
 
-def isIPInDomain(url):
+def is_ip_in_domain(url):
     """
     This function checks whether the given URL contains an IP address in the domain part.
 
@@ -54,7 +54,7 @@ def isIPInDomain(url):
     except ValueError:
         return 0
     
-def containsAtSymbol(url):
+def contains_at_symbol(url):
     """
     This fucntion checks whether the given URL contains an '@' symbol.
 
@@ -72,7 +72,7 @@ def containsAtSymbol(url):
     else:
         return 0
     
-def getUrlLength(url):
+def get_url_length(url):
     """
     This fucntion checks how long a URL is.
 
@@ -90,7 +90,7 @@ def getUrlLength(url):
     else:
         return 1
     
-def isProtocolInDomain(url):
+def is_protocol_in_domain(url):
     """
     This fucntion checks if an "HTTP" or "HTTPS" token is used in the domain part of the URL.
 
@@ -111,7 +111,7 @@ def isProtocolInDomain(url):
     else:
         return 0
     
-def isPrefixSuffixInDomain(url):
+def is_prefix_in_domain(url):
     """
     This fucntion checks if the domain part of a URL has a dash symbol (-).
 
@@ -130,7 +130,7 @@ def isPrefixSuffixInDomain(url):
     else:
         return 0
     
-def isTinyUrl(url):
+def is_tiny_url(url):
     """
     This fucntion checks if a URL shortening service is being used.
 
@@ -173,7 +173,7 @@ def redirection(url):
         return 1
     return 0
 
-def depthOfUrl(url):
+def depth_of_url(url):
     """
     This function checks the depth of a URL based on the number of "/".
 
@@ -192,7 +192,7 @@ def depthOfUrl(url):
             depth = depth+1
     return depth
 
-def registrationLength(url):
+def registration_length(url):
     """
     This function checks how long the domain has to expire for.
 
@@ -235,7 +235,7 @@ def registrationLength(url):
     return 1 if days_left < 365 else 0
 
 
-def getDNSRecord(url):
+def get_dns_record(url):
     """
     This function checks if there is a record for the domain in the DNS.
 
@@ -267,7 +267,7 @@ def getDNSRecord(url):
 
 
 
-def getWHOISDomain(url):
+def get_whois_domain(url):
     """
     This function attempts to perform a WHOIS lookup on the given URL's domain.
 
@@ -289,7 +289,7 @@ def getWHOISDomain(url):
         return 1
 
 
-def isGoogleIndex(url):
+def is_google_index(url):
     """
     This function checks if URL is indexed by Google using SerpAPI.
 
@@ -337,18 +337,18 @@ def extract_features(url):
     """
     
     return pd.DataFrame({
-        'IP_Address': [int(isIPInDomain(url))],
-        'Prefix/Suffix_in_Domain': [int(isPrefixSuffixInDomain(url))],
-        'Tiny_URL': [int(isTinyUrl(url))],
-        '@_Symbol': [int(containsAtSymbol(url))],
-        'URL_Length': [getUrlLength(url)],
-        'Http/https_in_Domain': [int(isProtocolInDomain(url))],
-        'Depth_Of_URL': [depthOfUrl(url)],
+        'IP_Address': [int(is_ip_in_domain(url))],
+        'Prefix/Suffix_in_Domain': [int(is_prefix_in_domain(url))],
+        'Tiny_URL': [int(is_tiny_url(url))],
+        '@_Symbol': [int(contains_at_symbol(url))],
+        'URL_Length': [get_url_length(url)],
+        'Http/https_in_Domain': [int(is_protocol_in_domain(url))],
+        'Depth_Of_URL': [depth_of_url(url)],
         'Redirection': [int(redirection(url))],
-        'Google_Index': [int(isGoogleIndex(url))],
-        'WHOIS_Domain': [int(getWHOISDomain(url))],
-        'DNS_Record': [int(getDNSRecord(url))],
-        'Registration_Length': [int(registrationLength(url))],
+        'Google_Index': [int(is_google_index(url))],
+        'WHOIS_Domain': [int(get_whois_domain(url))],
+        'DNS_Record': [int(get_dns_record(url))],
+        'Registration_Length': [int(registration_length(url))],
         'Num_of_Dots': [url.count('.')],
         'Num_of_Hyphens': [url.count('-')],
         'Num_of_Underscore':[ url.count('_')]
