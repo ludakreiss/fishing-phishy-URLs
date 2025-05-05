@@ -64,12 +64,12 @@ def main():
                             <br> However, this deduction is based on the features of URL, and not the components of the webpage for example.  </li>
             <li>For the available models, they are trained to flag URLs with: <br>
                             <ol>
-                                <li> An IP address in their domain <li>
-                                <li> A length of 54 or more characters <li>
-                                <li> Shortening services <li>
-                                <li> No DNS record, no registration in Google Index, no registration in WHOIS <li>
-                            <ol>
-                            and many more features as well. <li> 
+                                <li> An IP address in their domain </li>
+                                <li> A length of 54 or more characters </li>
+                                <li> Shortening services </li>
+                                <li> No DNS record, no registration in Google Index, no registration in WHOIS </li>
+                            </ol>
+                            and many more features as well. </li> 
         </ol> """, 
         
         unsafe_allow_html=True)
