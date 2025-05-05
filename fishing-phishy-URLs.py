@@ -47,10 +47,27 @@ def main():
         st.sidebar.markdown(r"""
         <ol>
             <li>Make sure that you do not click on the URL if you beleive it is suspicious. 
-                    Instead,right-click the URL and click "Copy link address" to avoid opening possible phishing URLs. </li>
-            <li>When trying a URL out, make sure that the text field include the explicit version of the URL and not the bare. For example, "google.com" &#x274E
-                    but "https://www.google.com" &#x2705; </li>
+                    \nInstead,right-click the URL and click "Copy link address" to avoid opening possible phishing URLs. </li>
+            <li>When trying a URL out, make sure that the text field include the explicit version of the URL and not the bare. \nFor example: \n"google.com" &#x274E
+                     \n "https://www.google.com" &#x2705; </li>
             
+        </ol> """, 
+        
+        unsafe_allow_html=True)
+
+        st.header("Additional Remarks About The Phishing Detection System")
+        st.sidebar.markdown(r"""
+        <ol>
+            <li>This application does NOT determine whether the URL that is entered is phishing or benign. 
+                            It only provides a percentage of how suspicious the URL seems like. </li>
+            <li>In most cases, some benign URLs may indicate a high percentage of possible phishing. 
+                            \n However, this deduction is based on the features of URL, and not the components of the webpage for example.  </li>
+            <li>For the available models, they are trained to flag URLs with: \n
+                            <li> An IP address in their domain <li>
+                            <li> A length of 54 or more characters <li>
+                            <li> Shortening services <li>
+                            <li> No DNS record, no registration in Google Index, no registration in WHOIS <li>
+                            and many more features as well. <li> 
         </ol> """, 
         
         unsafe_allow_html=True)
