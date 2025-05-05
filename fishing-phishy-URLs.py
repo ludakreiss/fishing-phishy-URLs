@@ -44,16 +44,16 @@ def main():
 
     with st.sidebar:
         st.header("Tips on How to Upload The URL for The Best Results")
-        st.markdown(r"""
-        <ol>
-            <li>Make sure that you do not click on the URL if you beleive it is suspicious. 
-                    Instead,right-click the URL and click "Copy link address" to avoid opening possible phishing URLs. </li>
-            <li>When trying a URL out, make sure that the text field include the explicit version of the URL and not the bare. For example, "google.com" &#x274E
-                    but "https://www.google.com" &#x2705; </li>
+        # st.markdown(r"""
+        # <ol>
+        #     <li>Make sure that you do not click on the URL if you beleive it is suspicious. 
+        #             Instead,right-click the URL and click "Copy link address" to avoid opening possible phishing URLs. </li>
+        #     <li>When trying a URL out, make sure that the text field include the explicit version of the URL and not the bare. For example, "google.com" &#x274E
+        #             but "https://www.google.com" &#x2705; </li>
             
-        </ol> """, 
+        # </ol> """, 
         
-        unsafe_allow_html=True)
+        # unsafe_allow_html=True)
 
 
     # Selecting whuich model would the user liek to pick
